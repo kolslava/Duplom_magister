@@ -1,0 +1,8 @@
+# components/fleet/server_config/fleet.yml
+server:
+  osquery_tls_server_url: fleet:8412
+tls:
+  server_certificate: /etc/fleet/certs/server.crt
+  server_key: /etc/fleet/certs/server.key
+logging:
+  json: true

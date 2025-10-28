@@ -1,0 +1,22 @@
+# components/suricata/config/suricata.yaml
+%YAML 1.1
+---
+outputs:
+  - eve-log:
+      enabled: yes
+      filetype: regular
+      filename: eve.json
+      types:
+        - alert
+        - flow
+        - dhcp
+        - dns
+        - http
+        - tls
+        - files
+        - stats
+vars:
+  address-groups:
+    HOME_NET: "[172.16.0.0/12, 192.168.0.0/16]"
+    EXTERNAL_NET: "!$HOME_NET"
+default-log-dir: /var/log/suricata/
