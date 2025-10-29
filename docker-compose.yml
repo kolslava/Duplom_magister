@@ -131,18 +131,30 @@ services:
     image: jasonish/suricata:latest
     container_name: ${PROJECT_NAME}_suricata
     restart: unless-stopped
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
-      - SYS_NICE
+    cap_add: [NET_ADMIN, NET_RAW, SYS_NICE]
     network_mode: service:nginx
     command: suricata -c /etc/suricata/suricata.yaml -i eth0
     volumes:
       - ./Components/Suricata/config/suricata.yaml:/etc/suricata/suricata.yaml
-      - ./Components/Suricata/logs:/var/log/suricata
+      # ## ЗМІНА ТУТ: Використовуємо іменований том для логів ##
+      - suricata-logs:/var/log/suricata
       - ./Components/Suricata/rules:/etc/suricata/rules
     depends_on:
       - nginx
+
+  orchestrator:
+    build:
+      context: ./Program
+    container_name: ${PROJECT_NAME}_orchestrator
+    restart: unless-stopped
+    volumes:
+      - suricata-logs:/var/log/suricata
+      - ./Components/FleetDM/Certificates/server.crt:/etc/ssl/certs/fleet_server.crt:ro
+    depends_on:
+      - fleet
+      - nginx
+    networks:
+      - app-network
 
 networks:
   app-network:
@@ -151,3 +163,4 @@ networks:
 volumes:
   redis-data:
   mysql-data:
+  suricata-logs:
